@@ -1,6 +1,8 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +20,10 @@ public class Animal extends AbstractBaseEntity {
     private String name;
     private String description;
     private String status; // e.g., "available", "adopted"
+    @ManyToOne
+    @JoinColumn(name = "id_specie")
     private Specie specie;
+    @ManyToOne
+    @JoinColumn(name = "id_race")
     private Race race;
 }
