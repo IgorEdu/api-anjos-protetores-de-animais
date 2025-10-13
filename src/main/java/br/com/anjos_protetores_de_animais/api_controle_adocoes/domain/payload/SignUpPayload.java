@@ -1,21 +1,21 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Getter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SignUpPayload {
 
-    @NonNull
+    @NotBlank
     private String name;
 
-    @NonNull
+    @NotBlank
     private String email;
 
-    @NonNull
+    @NotBlank
     private String password;
 }

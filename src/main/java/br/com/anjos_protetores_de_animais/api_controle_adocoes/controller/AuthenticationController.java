@@ -4,16 +4,13 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.LoginD
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.LoginPayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.SignUpPayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AuthenticationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController("authenticationController")
 @RequestMapping(value = "/api/auth")
 public class AuthenticationController {
-
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(final AuthenticationService authenticationService) {
@@ -21,17 +18,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginDto> login(@RequestBody final LoginPayload payload) {
+    public ResponseEntity<LoginDto> login(@RequestBody @Valid final LoginPayload payload) {
         return this.authenticationService.login(payload);
     }
 
-    @PostMapping("logout")
-    public void logout() {
-
+    @GetMapping("logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Logout successful");
     }
 
     @PostMapping("signUp")
-    public ResponseEntity<?> signUp(@RequestBody final SignUpPayload payload) {
+    public ResponseEntity<?> signUp(@RequestBody @Valid final SignUpPayload payload) {
         return this.authenticationService.signUp(payload);
     }
 }
