@@ -5,9 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @MappedSuperclass
@@ -19,11 +21,11 @@ public class AbstractBaseEntity implements Serializable {
     private static final long serialVersionUID = -5144401939612964877L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
-    protected Long id;
+    protected UUID id;
 
-    public AbstractBaseEntity(@NonNull final Long id) {
+    public AbstractBaseEntity(@NonNull final UUID id) {
         this.id = id;
     }
 }
