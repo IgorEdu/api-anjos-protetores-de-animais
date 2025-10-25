@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto {
+
+    private final UUID id;
 
     private final String name;
 
@@ -18,10 +22,12 @@ public class UserDto {
     private final String address;
 
     @Builder
-    protected UserDto(final String name,
+    protected UserDto(final UUID id,
+                      final String name,
                       final String email,
                       final String phone,
                       final String address) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -30,6 +36,7 @@ public class UserDto {
 
     public static UserDto toDto(final Adopter entity) {
         return UserDto.builder()
+            .id(entity.getId())
             .name(entity.getName())
             .email(entity.getEmail())
             .phone(entity.getPhone())
