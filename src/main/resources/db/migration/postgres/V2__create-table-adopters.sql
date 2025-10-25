@@ -1,3 +1,13 @@
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+--------------------------------------------------------------
+
 CREATE TABLE adopters (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     is_deleted BOOLEAN DEFAULT FALSE,

@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface AdopterRepository extends JpaRepository<Adopter, Long>, JpaSpecificationExecutor<Adopter> {
+public interface AdopterRepository extends JpaRepository<Adopter, UUID>, JpaSpecificationExecutor<Adopter> {
 
     Optional<Adopter> findOneByEmail(final String email);
+
+    Optional<Adopter> findOneByIdAndIsDeletedFalse(final UUID id);
 }
