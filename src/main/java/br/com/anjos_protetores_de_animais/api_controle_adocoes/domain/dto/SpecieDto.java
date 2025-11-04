@@ -28,4 +28,10 @@ public class SpecieDto {
             .name(entity.getName())
             .build();
     }
+
+    public Specie toEntity() {
+        return new Specie(
+            this.getName()
+        );
+    }
 }
