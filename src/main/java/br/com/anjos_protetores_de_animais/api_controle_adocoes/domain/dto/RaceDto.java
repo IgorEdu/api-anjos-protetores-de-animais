@@ -29,4 +29,10 @@ public class RaceDto {
             .name(entity.getName())
             .build();
     }
+
+    public Race toEntity() {
+        return new Race(
+                this.getName()
+        );
+    }
 }
