@@ -17,18 +17,21 @@ public class AnimalListDto {
     private final String description;
     private final String status; // e.g., "available", "adopted"
     private final SpecieDto specie;
+    private final RaceDto race;
 
     @Builder
     protected AnimalListDto(final UUID id,
                             final String name,
                             final String description,
                             final String status,
-                            final SpecieDto specie) {
+                            final SpecieDto specie,
+                            final RaceDto race) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
         this.specie = specie;
+        this.race = race;
     }
 
     public static AnimalListDto toDto(final Animal entity) {
@@ -38,6 +41,7 @@ public class AnimalListDto {
             .description(entity.getDescription())
             .status(entity.getStatus())
             .specie(SpecieDto.toDto(entity.getSpecie()))
+            .race(RaceDto.toDto(entity.getRace()))
             .build();
     }
 }
