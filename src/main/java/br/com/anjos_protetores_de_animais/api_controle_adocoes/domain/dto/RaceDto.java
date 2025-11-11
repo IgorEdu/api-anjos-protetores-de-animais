@@ -15,23 +15,29 @@ public class RaceDto {
     private final UUID id;
 
     private final String name;
+    private final Specie specie;
 
     @Builder
     protected RaceDto(final UUID id,
-                        final String name) {
+                      final Specie specie,
+                      final String name
+    ) {
         this.id = id;
+        this.specie = specie;
         this.name = name;
     }
 
     public static RaceDto toDto(final Race entity) {
         return RaceDto.builder()
-            .id(entity.getId())
-            .name(entity.getName())
-            .build();
+                .id(entity.getId())
+                .specie(entity.getSpecie())
+                .name(entity.getName())
+                .build();
     }
 
     public Race toEntity() {
         return new Race(
+                this.getSpecie(),
                 this.getName()
         );
     }

@@ -44,6 +44,7 @@ public class RaceServiceImpl implements RaceService {
     public RaceDto findRaceById(UUID id) {
         final Race race = this.repository.findById(id).orElseThrow();
 
+        return RaceDto.toDto(race);
     }
 
     @Override

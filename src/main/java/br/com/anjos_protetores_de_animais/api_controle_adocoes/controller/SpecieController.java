@@ -26,7 +26,7 @@ public class SpecieController extends BaseController {
 
     @GetMapping
     public ResponseEntity<List<SpecieDto>> findAll() {
-        final List<SpecieDto> animals = this.specieService.findAll();
+        final List<SpecieDto> animals = this.specieService.findAllSpecies();
 
         return ResponseEntity.ok(animals);
     }
