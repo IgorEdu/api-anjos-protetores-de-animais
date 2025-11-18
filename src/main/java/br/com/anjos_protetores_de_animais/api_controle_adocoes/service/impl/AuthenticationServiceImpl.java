@@ -7,6 +7,7 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.Lo
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.SignUpPayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AdopterRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AuthenticationService;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,9 +21,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private static final List<Adopter> users = List.of(
-            new Adopter("Murilo", "murilo@gmail.com", "pass123", "phone", "address", false)
-    );
 
     private final AdopterRepository repository;
     private final TokenService tokenService;
@@ -71,13 +69,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ResponseEntity.ok(response);
 
     }
-
+    
+  
     @Override
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok(null);
     }
 
-    @Override
+      @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> signUp(final SignUpPayload payload) {
         final String email = payload.getEmail();
@@ -94,9 +93,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         final Adopter user = new Adopter(
                 name, email, password
         );
+        
+        // Garantimos que é USER (embora o construtor já faça isso)
+        user.setRole(Role.USER); 
 
         this.repository.save(user);
 
         return ResponseEntity.ok(null);
     }
+    
 }

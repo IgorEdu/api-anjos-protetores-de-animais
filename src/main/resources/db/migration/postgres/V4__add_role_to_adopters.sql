@@ -1,0 +1,6 @@
+ALTER TABLE adopters ADD COLUMN role VARCHAR(20) DEFAULT 'USER';
+
+
+UPDATE adopters SET role = 'USER' WHERE role IS NULL;
+
+ALTER TABLE adopters ALTER COLUMN role SET NOT NULL;

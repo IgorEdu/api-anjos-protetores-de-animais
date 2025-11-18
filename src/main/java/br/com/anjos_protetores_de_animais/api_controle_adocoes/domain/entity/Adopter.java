@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.enums.Role;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import java.util.List;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -27,12 +32,16 @@ public class Adopter extends AbstractBaseEntity implements UserDetails {
     private String address;
     private Boolean isDeleted = false;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public Adopter(final String name,
                    final String email,
                    final String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
     }
 
     public Adopter(final String name,
@@ -45,6 +54,7 @@ public class Adopter extends AbstractBaseEntity implements UserDetails {
         this.password = password;
         this.phone = phone;
         this.address = address;
+        this.role = Role.USER;
     }
 
     public Adopter(final UUID id) {
@@ -53,7 +63,10 @@ public class Adopter extends AbstractBaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        if (this.role == Role.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
