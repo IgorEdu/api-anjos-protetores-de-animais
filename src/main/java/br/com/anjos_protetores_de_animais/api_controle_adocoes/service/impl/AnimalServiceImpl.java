@@ -6,9 +6,10 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Rac
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AnimalRepository;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository; // Novo import
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository; // Novo import
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository; 
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository; 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +60,14 @@ public class AnimalServiceImpl implements AnimalService {
         this.animalRepository.save(animal);
 
         return ResponseEntity.ok(null);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAnimal(UUID id) {
+        if (!this.animalRepository.existsById(id)) {
+            throw new EntityNotFoundException("Animal not found with id: " + id);
+        }
+        this.animalRepository.deleteById(id);
     }
 }
