@@ -37,6 +37,20 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/signUp").permitAll()
+
+
+                        .requestMatchers(HttpMethod.GET, "/api/animals").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/animals/**").hasAnyRole("USER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/species").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/species/**").hasAnyRole("USER", "ADMIN")
+
+                        .requestMatchers("/api/animals").hasRole("ADMIN") // POST
+                        .requestMatchers("/api/animals/**").hasRole("ADMIN") // PUT, DELETE
+
+                        .requestMatchers("/api/species").hasRole("ADMIN") // POST
+                        .requestMatchers("/api/species/**").hasRole("ADMIN") // PUT, DELETE
+
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

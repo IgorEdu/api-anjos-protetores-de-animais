@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AdopterUpdatePayload {
+public class UserUpdatePayload {
 
     private String name;
 

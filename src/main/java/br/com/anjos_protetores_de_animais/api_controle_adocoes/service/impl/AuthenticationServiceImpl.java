@@ -2,10 +2,10 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.service.impl;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.config.security.TokenService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.LoginDto;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Adopter;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.LoginPayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.SignUpPayload;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AdopterRepository;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.UserRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AuthenticationService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.enums.Role;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service("authenticationService")
@@ -22,11 +21,11 @@ import java.util.Optional;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
 
-    private final AdopterRepository repository;
+    private final UserRepository repository;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationServiceImpl(final AdopterRepository repository,
+    public AuthenticationServiceImpl(final UserRepository repository,
                                      final TokenService tokenService,
                                      final PasswordEncoder passwordEncoder) {
         this.repository = repository;
@@ -44,13 +43,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //                .findFirst();
 
         //  cenário real usando o repositório
-         final Optional<Adopter> possibleUser = this.repository.findOneByEmail(email);
+         final Optional<User> possibleUser = this.repository.findOneByEmail(email);
 
         if (possibleUser.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        final Adopter user = possibleUser.get();
+        final User user = possibleUser.get();
 
         // Validar a senha com o PasswordEncoder
          if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
@@ -83,14 +82,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         final String name = payload.getName();
         final String rawPassword = payload.getPassword();
 
-        final Optional<Adopter> possibleUser = this.repository.findOneByEmail(email);
+        final Optional<User> possibleUser = this.repository.findOneByEmail(email);
         if (possibleUser.isPresent()) {
             return ResponseEntity.badRequest().build();
         }
 
         final String password = passwordEncoder.encode(rawPassword);
 
-        final Adopter user = new Adopter(
+        final User user = new User(
                 name, email, password
         );
         

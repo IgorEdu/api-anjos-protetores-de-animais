@@ -1,7 +1,6 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.config.security;
 
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Adopter;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AdopterRepository;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,9 +16,9 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
-    private final AdopterRepository userRepository;
+    private final UserRepository userRepository;
 
-    public SecurityFilter(TokenService tokenService, AdopterRepository userRepository) {
+    public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
         this.tokenService = tokenService;
         this.userRepository = userRepository;
     }

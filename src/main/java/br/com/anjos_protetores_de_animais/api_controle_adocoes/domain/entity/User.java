@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Collection;
 import java.util.UUID;
 
-@Table(name = "adopters")
-@Entity(name = "Adopter")
+@Table(name = "users")
+@Entity(name = "User")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Adopter extends AbstractBaseEntity implements UserDetails {
+public class User extends AbstractBaseEntity implements UserDetails {
 
     private String name;
     private String email;
@@ -35,20 +35,20 @@ public class Adopter extends AbstractBaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public Adopter(final String name,
-                   final String email,
-                   final String password) {
+    public User(final String name,
+                final String email,
+                final String password) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = Role.USER;
     }
 
-    public Adopter(final String name,
-                   final String email,
-                   final String password,
-                   final String phone,
-                   final String address) {
+    public User(final String name,
+                final String email,
+                final String password,
+                final String phone,
+                final String address) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -57,7 +57,7 @@ public class Adopter extends AbstractBaseEntity implements UserDetails {
         this.role = Role.USER;
     }
 
-    public Adopter(final UUID id) {
+    public User(final UUID id) {
         super(id);
     }
 

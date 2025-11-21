@@ -1,6 +1,6 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.config.security;
 
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Adopter;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -16,7 +16,7 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(Adopter user) {
+    public String generateToken(User user) {
         try{
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
