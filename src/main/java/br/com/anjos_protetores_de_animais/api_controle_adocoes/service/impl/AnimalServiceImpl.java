@@ -5,9 +5,10 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Ani
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Race;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AnimalRepository;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository; 
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository; 
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service("animalService")
@@ -22,8 +24,8 @@ import java.util.UUID;
 public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalRepository animalRepository;
-    private final SpecieRepository specieRepository; 
-    private final RaceRepository raceRepository;     
+    private final SpecieRepository specieRepository;
+    private final RaceRepository raceRepository;
 
     // Atualizar construtor
     public AnimalServiceImpl(final AnimalRepository animalRepository,
@@ -38,24 +40,47 @@ public class AnimalServiceImpl implements AnimalService {
     public List<AnimalListDto> findAllAnimals() {
         final List<Animal> animals = this.animalRepository.findAll();
         return animals.stream()
-            .map(AnimalListDto::toDto)
-            .toList();
+                .map(AnimalListDto::toDto)
+                .toList();
     }
 
     @Override
     @Transactional
     public ResponseEntity<?> createAnimal(AnimalUpdatePayload payload) {
-        
         final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
         final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
 
-
         final Animal animal = new Animal();
+
         animal.setName(payload.getName());
         animal.setDescription(payload.getDescription());
         animal.setStatus(payload.getStatus());
-        animal.setSpecie(specie); 
-        animal.setRace(race);     
+        animal.setSpecie(specie);
+        animal.setRace(race);
+
+        this.animalRepository.save(animal);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> updateAnimal(UUID id, AnimalUpdatePayload payload) throws AnimalNotFoundException {
+        final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
+        final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
+
+        final Optional<Animal> persistedAnimal = animalRepository.findById(id);
+
+        if (persistedAnimal.isEmpty())
+            throw new AnimalNotFoundException();
+
+        final Animal animal = persistedAnimal.get();
+
+        animal.setName(payload.getName());
+        animal.setDescription(payload.getDescription());
+        animal.setStatus(payload.getStatus());
+        animal.setSpecie(specie);
+        animal.setRace(race);
 
         this.animalRepository.save(animal);
 

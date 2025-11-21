@@ -2,17 +2,14 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
-import org.springframework.web.bind.annotation.DeleteMapping; 
-import org.springframework.web.bind.annotation.PathVariable; 
-import java.util.UUID; 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -36,6 +33,11 @@ public class AnimalController extends BaseController {
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody final AnimalUpdatePayload payload) {
         return this.animalService.createAnimal(payload);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable final UUID id, @Valid @RequestBody final AnimalUpdatePayload payload) throws AnimalNotFoundException {
+        return this.animalService.updateAnimal(id, payload);
     }
 
     @DeleteMapping("/{id}")
