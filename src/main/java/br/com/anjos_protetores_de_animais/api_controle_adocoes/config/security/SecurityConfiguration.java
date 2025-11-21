@@ -3,6 +3,7 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.config.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod; // Verifique se este import existe
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -27,33 +28,50 @@ public class SecurityConfiguration {
     private SecurityFilter securityFilter;
 
     @Bean
+    @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .securityMatcher("/api/pvt/**")
                 .authorizeHttpRequests(authorize -> authorize
                         // A LINHA MAIS IMPORTANTE A ADICIONAR:
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/signUp").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/pvt/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/pvt/auth/signUp").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/pvt/animals").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/pvt/animals/**").hasAnyRole("USER", "ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/animals").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/animals/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/pvt/species").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/pvt/species/**").hasAnyRole("USER", "ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/species").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/species/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/pvt/animals").hasRole("ADMIN") // POST
+                        .requestMatchers("/api/pvt/animals/**").hasRole("ADMIN") // PUT, DELETE
 
-                        .requestMatchers("/api/animals").hasRole("ADMIN") // POST
-                        .requestMatchers("/api/animals/**").hasRole("ADMIN") // PUT, DELETE
-
-                        .requestMatchers("/api/species").hasRole("ADMIN") // POST
-                        .requestMatchers("/api/species/**").hasRole("ADMIN") // PUT, DELETE
+                        .requestMatchers("/api/pvt/species").hasRole("ADMIN") // POST
+                        .requestMatchers("/api/pvt/species/**").hasRole("ADMIN") // PUT, DELETE
 
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain securityPublicFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .securityMatcher("/api/pub/**")
+            .authorizeHttpRequests(authorize -> authorize
+                // A LINHA MAIS IMPORTANTE A ADICIONAR:
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/api/pub/**").permitAll()
+                .anyRequest().denyAll())
+            .build();
     }
 
     @Bean

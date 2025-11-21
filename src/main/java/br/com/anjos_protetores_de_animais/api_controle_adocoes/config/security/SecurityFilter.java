@@ -34,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path.startsWith("/api/auth/") || path.startsWith("/swagger-ui/") || path.startsWith("/v3/api-docs/")) {
+        if (path.startsWith("/api/pvt/auth/") || path.startsWith("/swagger-ui/") || path.startsWith("/v3/api-docs/")) {
             System.out.println("DEBUG: Bypass JWT para rota pública: " + path);
             filterChain.doFilter(request, response);
             return;

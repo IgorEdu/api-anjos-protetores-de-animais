@@ -9,29 +9,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(name = "animals")
-@Entity(name = "Animal")
+@Table(name = "adoption_requests")
+@Entity(name = "AdoptionRequest")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Animal extends AbstractBaseEntity {
-
-    private String name;
-
-    private String description;
-
-    private String status; // e.g., "available", "adopted"
+public class AdoptionRequest extends AbstractBaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "id_specie")
-    private Specie specie;
+    @JoinColumn(name = "animal_id")
+    private Animal animal;
 
     @ManyToOne
-    @JoinColumn(name = "id_race")
-    private Race race;
-
-    @ManyToOne
-    @JoinColumn(name = "adopted_by_id")
-    private User adoptedBy;
+    @JoinColumn(name = "adopter_id")
+    private User adopter;
 }

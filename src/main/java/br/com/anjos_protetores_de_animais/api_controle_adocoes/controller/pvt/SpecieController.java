@@ -1,9 +1,7 @@
-package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller;
+package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.ErrorDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.SpecieDto;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.SpecieNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.SpecieService;
@@ -15,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController("specieController")
-@RequestMapping(value = "/api/species")
+@RequestMapping(value = "/api/pvt/species")
 public class SpecieController extends BaseController {
 
     private final SpecieService specieService;

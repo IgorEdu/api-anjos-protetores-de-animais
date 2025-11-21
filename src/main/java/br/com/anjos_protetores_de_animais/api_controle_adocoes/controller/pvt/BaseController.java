@@ -1,4 +1,4 @@
-package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller;
+package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.ApiError;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.BaseException;
