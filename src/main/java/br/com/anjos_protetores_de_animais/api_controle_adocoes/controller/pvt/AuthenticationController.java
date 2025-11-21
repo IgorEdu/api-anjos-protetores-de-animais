@@ -1,4 +1,4 @@
-package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller;
+package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.LoginDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.LoginPayload;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("authenticationController")
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/api/pvt/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 

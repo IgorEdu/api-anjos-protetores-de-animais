@@ -1,4 +1,4 @@
-package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller;
+package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.UserDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.UUID;
 
 @RestController("userController")
-@RequestMapping(value = "/api/users")
+@RequestMapping(value = "/api/pvt/users")
 public class UserController extends BaseController {
 
     private final UserService userService;

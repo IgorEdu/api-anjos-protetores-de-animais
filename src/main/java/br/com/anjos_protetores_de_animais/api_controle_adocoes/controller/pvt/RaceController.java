@@ -1,6 +1,5 @@
-package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller;
+package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.ErrorDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.RaceDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController("raceController")
-@RequestMapping(value = "/api/species/{specieId}/races")
+@RequestMapping(value = "/api/pvt/species/{specieId}/races")
 public class RaceController extends BaseController {
 
     private final RaceService raceService;

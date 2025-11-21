@@ -1,16 +1,20 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.service.impl;
 
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AdoptionRequestDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.AdoptionRequest;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Animal;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Race;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AdoptionRequestRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AnimalRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +30,17 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final SpecieRepository specieRepository;
     private final RaceRepository raceRepository;
+    private final AdoptionRequestRepository adoptionRequestRepository;
 
     // Atualizar construtor
     public AnimalServiceImpl(final AnimalRepository animalRepository,
                              final SpecieRepository specieRepository,
-                             final RaceRepository raceRepository) {
+                             final RaceRepository raceRepository,
+                             final AdoptionRequestRepository adoptionRequestRepository) {
         this.animalRepository = animalRepository;
         this.specieRepository = specieRepository;
         this.raceRepository = raceRepository;
+        this.adoptionRequestRepository = adoptionRequestRepository;
     }
 
     @Override
@@ -42,6 +49,26 @@ public class AnimalServiceImpl implements AnimalService {
         return animals.stream()
                 .map(AnimalListDto::toDto)
                 .toList();
+    }
+
+    @Override
+    public ResponseEntity<List<AdoptionRequestDto>> findAllAdoptionRequestsByAnimal(@NotNull final UUID id) {
+        try {
+            this.animalRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+            final List<AdoptionRequest> adoptionRequests = this.adoptionRequestRepository.findAllWithAllDependenciesByAnimalId(
+                id
+            );
+
+            final List<AdoptionRequestDto> requestsDto = adoptionRequests.stream()
+                .map(AdoptionRequestDto::toDto)
+                .toList();
+
+            return ResponseEntity.ok(requestsDto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override
