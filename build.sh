@@ -4,7 +4,8 @@ JAR_FILE=api-controle-adocoes-0.0.1-SHNAPSHOT.jar
 IMAGE_NAME=api_controle_adocoes:latest
 
 echo "### Iniciando o build do projeto..."
-mvn clean package
+mvn clean
+mvn install
 
 if [ $? -ne 0 ]; then
     echo "Erro ao compilar o projeto. Abortando..."
