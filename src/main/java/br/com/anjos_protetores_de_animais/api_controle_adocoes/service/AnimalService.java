@@ -15,7 +15,9 @@ public interface AnimalService {
     List<AnimalListDto> findAllAnimals();
     ResponseEntity<List<AdoptionRequestDto>> findAllAdoptionRequestsByAnimal(@NotNull final UUID id);
     ResponseEntity<?> createAnimal(final AnimalUpdatePayload payload);
-    ResponseEntity<?> updateAnimal(final UUID id, final AnimalUpdatePayload payload) throws AnimalNotFoundException;
+    ResponseEntity<?> updateAnimal(final UUID id, final AnimalUpdatePayload payload);
     void deleteAnimal(UUID id);
+
+    ResponseEntity<?> requestAdoption(final UUID animalId, final UUID adopterId);
 
 }

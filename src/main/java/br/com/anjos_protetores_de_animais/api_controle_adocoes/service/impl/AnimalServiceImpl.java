@@ -2,16 +2,11 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.service.impl;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AdoptionRequestDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.AdoptionRequest;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Animal;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Race;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.*;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AdoptionRequestRepository;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.AnimalRepository;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository;
-import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UserNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.*;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
@@ -31,16 +26,19 @@ public class AnimalServiceImpl implements AnimalService {
     private final SpecieRepository specieRepository;
     private final RaceRepository raceRepository;
     private final AdoptionRequestRepository adoptionRequestRepository;
+    private final UserRepository userRepository;
 
     // Atualizar construtor
     public AnimalServiceImpl(final AnimalRepository animalRepository,
                              final SpecieRepository specieRepository,
                              final RaceRepository raceRepository,
-                             final AdoptionRequestRepository adoptionRequestRepository) {
+                             final AdoptionRequestRepository adoptionRequestRepository,
+                             final UserRepository userRepository) {
         this.animalRepository = animalRepository;
         this.specieRepository = specieRepository;
         this.raceRepository = raceRepository;
         this.adoptionRequestRepository = adoptionRequestRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -92,26 +90,25 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> updateAnimal(UUID id, AnimalUpdatePayload payload) throws AnimalNotFoundException {
-        final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
-        final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
+    public ResponseEntity<?> updateAnimal(UUID id, AnimalUpdatePayload payload) {
+        try {
+            final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
+            final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
 
-        final Optional<Animal> persistedAnimal = animalRepository.findById(id);
+            final Animal animal = animalRepository.findById(id).orElseThrow(AnimalNotFoundException::new);
 
-        if (persistedAnimal.isEmpty())
-            throw new AnimalNotFoundException();
+            animal.setName(payload.getName());
+            animal.setDescription(payload.getDescription());
+            animal.setStatus(payload.getStatus());
+            animal.setSpecie(specie);
+            animal.setRace(race);
 
-        final Animal animal = persistedAnimal.get();
+            this.animalRepository.save(animal);
 
-        animal.setName(payload.getName());
-        animal.setDescription(payload.getDescription());
-        animal.setStatus(payload.getStatus());
-        animal.setSpecie(specie);
-        animal.setRace(race);
-
-        this.animalRepository.save(animal);
-
-        return ResponseEntity.ok(null);
+            return ResponseEntity.ok(null);
+        } catch (AnimalNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override
@@ -121,5 +118,25 @@ public class AnimalServiceImpl implements AnimalService {
             throw new EntityNotFoundException("Animal not found with id: " + id);
         }
         this.animalRepository.deleteById(id);
+    }
+
+    @Override
+    public ResponseEntity<?> requestAdoption(@NotNull UUID animalId, @NotNull UUID adopterId) {
+        try {
+            final Animal animal = this.animalRepository.findById(animalId)
+                    .orElseThrow(EntityNotFoundException::new);
+
+            final User adopter = this.userRepository.findById(adopterId)
+                    .orElseThrow(UserNotFoundException::new);
+
+            AdoptionRequest adoptionRequest = new AdoptionRequest();
+
+            adoptionRequest.setAdopter(adopter);
+            adoptionRequest.setAnimal(animal);
+
+            return ResponseEntity.ok(this.adoptionRequestRepository.save(adoptionRequest));
+        } catch (EntityNotFoundException | UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
