@@ -31,7 +31,7 @@ public class AnimalController extends BaseController {
         return ResponseEntity.ok(animals);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/request/{id}")
     public ResponseEntity<?> requestAdoption(@PathVariable final UUID id) {
         try {
             final User user = userService.getCurrentUserProfile();
