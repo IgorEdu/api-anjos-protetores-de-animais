@@ -2,6 +2,7 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.service.impl;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AdoptionRequestDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.*;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalAlreadyAdoptedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UserNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.*;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AdoptionRequestService;
@@ -68,6 +69,10 @@ public class AdoptionRequestRequestServiceImpl implements AdoptionRequestService
             final User adopter = this.userRepository.findById(adopterId)
                     .orElseThrow(UserNotFoundException::new);
 
+            if(animal.getAdoptedBy() != null){
+                throw new AnimalAlreadyAdoptedException();
+            }
+
             AdoptionRequest adoptionRequest = new AdoptionRequest();
 
             adoptionRequest.setAdopter(adopter);
@@ -76,6 +81,8 @@ public class AdoptionRequestRequestServiceImpl implements AdoptionRequestService
             return ResponseEntity.ok(this.adoptionRequestRepository.save(adoptionRequest));
         } catch (EntityNotFoundException | UserNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (AnimalAlreadyAdoptedException e){
+            return ResponseEntity.badRequest().body(e);
         }
     }
 
