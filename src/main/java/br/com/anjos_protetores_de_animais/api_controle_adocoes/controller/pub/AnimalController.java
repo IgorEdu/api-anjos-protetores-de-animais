@@ -4,6 +4,7 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt.Ba
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AdoptionRequestService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,12 @@ public class AnimalController extends BaseController {
 
     private final AnimalService animalService;
     private final UserService userService;
+    private final AdoptionRequestService adoptionRequestService;
 
-    public AnimalController(final AnimalService animalService, final UserService userService) {
+    public AnimalController(final AnimalService animalService, final UserService userService, final AdoptionRequestService adoptionRequestService) {
         this.animalService = animalService;
         this.userService = userService;
+        this.adoptionRequestService = adoptionRequestService;
     }
 
     @GetMapping
@@ -37,7 +40,7 @@ public class AnimalController extends BaseController {
             final User user = userService.getCurrentUserProfile();
             final UUID adopterId = user.getId();
 
-            return this.animalService.requestAdoption(id, adopterId);
+            return this.adoptionRequestService.requestAdoption(id, adopterId);
         } catch (UnauthorizedException e){
             return ResponseEntity.badRequest().body(e);
         }

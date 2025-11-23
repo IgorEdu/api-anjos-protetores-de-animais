@@ -25,20 +25,15 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final SpecieRepository specieRepository;
     private final RaceRepository raceRepository;
-    private final AdoptionRequestRepository adoptionRequestRepository;
-    private final UserRepository userRepository;
 
     // Atualizar construtor
     public AnimalServiceImpl(final AnimalRepository animalRepository,
                              final SpecieRepository specieRepository,
-                             final RaceRepository raceRepository,
-                             final AdoptionRequestRepository adoptionRequestRepository,
-                             final UserRepository userRepository) {
+                             final RaceRepository raceRepository
+                             ) {
         this.animalRepository = animalRepository;
         this.specieRepository = specieRepository;
         this.raceRepository = raceRepository;
-        this.adoptionRequestRepository = adoptionRequestRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -47,26 +42,6 @@ public class AnimalServiceImpl implements AnimalService {
         return animals.stream()
                 .map(AnimalListDto::toDto)
                 .toList();
-    }
-
-    @Override
-    public ResponseEntity<List<AdoptionRequestDto>> findAllAdoptionRequestsByAnimal(@NotNull final UUID id) {
-        try {
-            this.animalRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new);
-
-            final List<AdoptionRequest> adoptionRequests = this.adoptionRequestRepository.findAllWithAllDependenciesByAnimalId(
-                id
-            );
-
-            final List<AdoptionRequestDto> requestsDto = adoptionRequests.stream()
-                .map(AdoptionRequestDto::toDto)
-                .toList();
-
-            return ResponseEntity.ok(requestsDto);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @Override
@@ -118,25 +93,5 @@ public class AnimalServiceImpl implements AnimalService {
             throw new EntityNotFoundException("Animal not found with id: " + id);
         }
         this.animalRepository.deleteById(id);
-    }
-
-    @Override
-    public ResponseEntity<?> requestAdoption(@NotNull UUID animalId, @NotNull UUID adopterId) {
-        try {
-            final Animal animal = this.animalRepository.findById(animalId)
-                    .orElseThrow(EntityNotFoundException::new);
-
-            final User adopter = this.userRepository.findById(adopterId)
-                    .orElseThrow(UserNotFoundException::new);
-
-            AdoptionRequest adoptionRequest = new AdoptionRequest();
-
-            adoptionRequest.setAdopter(adopter);
-            adoptionRequest.setAnimal(animal);
-
-            return ResponseEntity.ok(this.adoptionRequestRepository.save(adoptionRequest));
-        } catch (EntityNotFoundException | UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

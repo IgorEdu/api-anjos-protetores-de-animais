@@ -3,6 +3,7 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AdoptionRequestService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +18,11 @@ import java.util.List;
 public class AnimalController extends BaseController {
 
     private final AnimalService animalService;
+    private final AdoptionRequestService adoptionRequestService;
 
-    public AnimalController(final AnimalService animalService) {
+    public AnimalController(final AnimalService animalService, final AdoptionRequestService adoptionRequestService) {
         this.animalService = animalService;
+        this.adoptionRequestService = adoptionRequestService;
     }
 
     @GetMapping
@@ -29,9 +32,9 @@ public class AnimalController extends BaseController {
         return ResponseEntity.ok(animals);
     }
 
-    @GetMapping("{id}/adoptionRequests")
+    @GetMapping("/{id}/adoptionRequests")
     public ResponseEntity<?> findAllAdoptionRequests(@PathVariable final UUID id) {
-        return this.animalService.findAllAdoptionRequestsByAnimal(id);
+        return this.adoptionRequestService.findAllAdoptionRequestsByAnimal(id);
     }
 
     @PostMapping
