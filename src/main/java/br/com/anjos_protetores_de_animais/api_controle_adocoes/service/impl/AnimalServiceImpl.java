@@ -45,6 +45,14 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
+    public List<AnimalListDto> findAllUnadoptedAnimals() {
+        final List<Animal> animals = this.animalRepository.findByAdoptedByIdIsNull();
+        return animals.stream()
+                .map(AnimalListDto::toDto)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<?> createAnimal(AnimalUpdatePayload payload) {
         final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));

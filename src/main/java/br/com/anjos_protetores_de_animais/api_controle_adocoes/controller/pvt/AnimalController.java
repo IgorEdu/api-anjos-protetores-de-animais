@@ -26,6 +26,13 @@ public class AnimalController extends BaseController {
     }
 
     @GetMapping
+    public ResponseEntity<List<AnimalListDto>> findAllUnadoptedAnimals() {
+        final List<AnimalListDto> animals = this.animalService.findAllAnimals();
+
+        return ResponseEntity.ok(animals);
+    }
+
+    @GetMapping("/allAnimals")
     public ResponseEntity<List<AnimalListDto>> findAllAnimals() {
         final List<AnimalListDto> animals = this.animalService.findAllAnimals();
 

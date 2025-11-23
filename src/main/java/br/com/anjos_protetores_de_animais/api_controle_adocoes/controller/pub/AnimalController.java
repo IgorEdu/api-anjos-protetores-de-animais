@@ -28,8 +28,8 @@ public class AnimalController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AnimalListDto>> findAllAnimals() {
-        final List<AnimalListDto> animals = this.animalService.findAllAnimals();
+    public ResponseEntity<List<AnimalListDto>> findAllUnadoptedAnimals() {
+        final List<AnimalListDto> animals = this.animalService.findAllUnadoptedAnimals();
 
         return ResponseEntity.ok(animals);
     }

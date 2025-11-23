@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface AnimalService {
 
     List<AnimalListDto> findAllAnimals();
+    List<AnimalListDto> findAllUnadoptedAnimals();
     ResponseEntity<?> createAnimal(final AnimalUpdatePayload payload);
     ResponseEntity<?> updateAnimal(final UUID id, final AnimalUpdatePayload payload);
     void deleteAnimal(UUID id);
