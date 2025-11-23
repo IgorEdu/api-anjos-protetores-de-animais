@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@RestController("privateAnimalController")
+@RestController("adoptionRequestController")
 @RequestMapping(value = "/api/pvt/adoptionRequests")
 public class AdoptionRequestController extends BaseController {
     private final AdoptionRequestService adoptionRequestService;
