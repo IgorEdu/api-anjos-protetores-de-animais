@@ -53,6 +53,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/pvt/species").hasRole("ADMIN") // POST
                         .requestMatchers("/api/pvt/species/**").hasRole("ADMIN") // PUT, DELETE
 
+                        .requestMatchers("/api/pvt/adoptionRequests").hasRole("ADMIN") // POST
+                        .requestMatchers("/api/pvt/adoptionRequests/**").hasRole("ADMIN") // PUT, DELETE
+
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
