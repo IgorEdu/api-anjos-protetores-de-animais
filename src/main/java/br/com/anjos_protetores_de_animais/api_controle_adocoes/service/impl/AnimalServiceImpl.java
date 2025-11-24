@@ -1,6 +1,7 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.service.impl;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AdoptionRequestDto;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalDetailsDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.*;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
@@ -50,6 +51,19 @@ public class AnimalServiceImpl implements AnimalService {
         return animals.stream()
                 .map(AnimalListDto::toDto)
                 .toList();
+    }
+
+    @Override
+    public ResponseEntity<AnimalDetailsDto> getAnimalById(final UUID id) {
+        try {
+            final Animal animal = animalRepository.findById(id).orElseThrow(AnimalNotFoundException::new);
+
+            return ResponseEntity.ok(
+                AnimalDetailsDto.toDto(animal)
+            );
+        } catch (AnimalNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override

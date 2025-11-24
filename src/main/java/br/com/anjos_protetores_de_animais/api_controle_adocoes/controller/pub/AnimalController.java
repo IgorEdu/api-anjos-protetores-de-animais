@@ -1,6 +1,7 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pub;
 
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt.BaseController;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalDetailsDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
@@ -32,6 +33,11 @@ public class AnimalController extends BaseController {
         final List<AnimalListDto> animals = this.animalService.findAllUnadoptedAnimals();
 
         return ResponseEntity.ok(animals);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<AnimalDetailsDto> getById(@PathVariable final UUID id) {
+        return this.animalService.getAnimalById(id);
     }
 
     @PostMapping("/request/{id}")
