@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service("adoptionRequestService")
-@Transactional(readOnly = true)
+@Transactional
 public class AdoptionRequestRequestServiceImpl implements AdoptionRequestService {
 
     private final AnimalRepository animalRepository;
@@ -96,7 +96,7 @@ public class AdoptionRequestRequestServiceImpl implements AdoptionRequestService
 
             final Animal animal = adoptionRequest.getAnimal();
             animal.setAdoptedBy(adopter);
-
+            animal.setStatus("ADOPTED");
             this.animalRepository.save(animal);
 
             return ResponseEntity.ok(animal);
