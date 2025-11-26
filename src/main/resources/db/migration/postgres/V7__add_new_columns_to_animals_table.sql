@@ -1,0 +1,5 @@
+ALTER TABLE animals
+    ADD COLUMN age INTEGER NULL,
+    ADD COLUMN gender VARCHAR(20) NULL,
+    ADD COLUMN animal_size VARCHAR(20) NULL,
+    ADD COLUMN photo_url TEXT NULL;

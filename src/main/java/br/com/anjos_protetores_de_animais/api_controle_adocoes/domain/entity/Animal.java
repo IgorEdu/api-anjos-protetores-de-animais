@@ -1,5 +1,6 @@
 package br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,7 +22,19 @@ public class Animal extends AbstractBaseEntity {
 
     private String description;
 
-    private String status; // e.g., "available", "adopted"
+    private String status; // e.g., "AVAILABLE", "ADOPTED"
+
+    @Column(name = "age")
+    private Integer age;
+
+    @Column(name = "gender")
+    private String gender; // "MALE", "FEMALE", "UNKNOWN"
+
+    @Column(name = "animal_size")
+    private String animalSize; // "SMALL", "MEDIUM", "LARGE"
+
+    @Column(name = "photo_url")
+    private String photoUrl; // URL da foto no upload
 
     @ManyToOne
     @JoinColumn(name = "id_specie")

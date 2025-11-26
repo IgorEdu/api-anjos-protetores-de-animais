@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AnimalUpdatePayload {
+
     @NotBlank
     private String name;
 
@@ -23,4 +24,11 @@ public class AnimalUpdatePayload {
 
     @NotBlank
     private String raceId;
+
+    // Novos campos ---------------------------
+
+    private Integer age;          // idade do animal
+    private String gender;        // MACHO / FEMEA
+    private String animalSize;    // PEQUENO / MEDIO / GRANDE
+    private String photoUrl;      // URL da foto
 }

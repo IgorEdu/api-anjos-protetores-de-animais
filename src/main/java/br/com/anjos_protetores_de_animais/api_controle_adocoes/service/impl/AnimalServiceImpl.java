@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service("animalService")
@@ -27,11 +26,9 @@ public class AnimalServiceImpl implements AnimalService {
     private final SpecieRepository specieRepository;
     private final RaceRepository raceRepository;
 
-    // Atualizar construtor
     public AnimalServiceImpl(final AnimalRepository animalRepository,
                              final SpecieRepository specieRepository,
-                             final RaceRepository raceRepository
-                             ) {
+                             final RaceRepository raceRepository) {
         this.animalRepository = animalRepository;
         this.specieRepository = specieRepository;
         this.raceRepository = raceRepository;
@@ -59,7 +56,7 @@ public class AnimalServiceImpl implements AnimalService {
             final Animal animal = animalRepository.findById(id).orElseThrow(AnimalNotFoundException::new);
 
             return ResponseEntity.ok(
-                AnimalDetailsDto.toDto(animal)
+                    AnimalDetailsDto.toDto(animal)
             );
         } catch (AnimalNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -69,6 +66,7 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     @Transactional
     public ResponseEntity<?> createAnimal(AnimalUpdatePayload payload) {
+
         final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
         final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
 
@@ -80,6 +78,12 @@ public class AnimalServiceImpl implements AnimalService {
         animal.setSpecie(specie);
         animal.setRace(race);
 
+        // Novos campos
+        animal.setAge(payload.getAge());
+        animal.setGender(payload.getGender());
+        animal.setAnimalSize(payload.getAnimalSize());
+        animal.setPhotoUrl(payload.getPhotoUrl());
+
         this.animalRepository.save(animal);
 
         return ResponseEntity.ok(null);
@@ -89,6 +93,7 @@ public class AnimalServiceImpl implements AnimalService {
     @Transactional
     public ResponseEntity<?> updateAnimal(UUID id, AnimalUpdatePayload payload) {
         try {
+
             final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
             final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
 
@@ -99,6 +104,12 @@ public class AnimalServiceImpl implements AnimalService {
             animal.setStatus(payload.getStatus());
             animal.setSpecie(specie);
             animal.setRace(race);
+
+            // Novos campos
+            animal.setAge(payload.getAge());
+            animal.setGender(payload.getGender());
+            animal.setAnimalSize(payload.getAnimalSize());
+            animal.setPhotoUrl(payload.getPhotoUrl());
 
             this.animalRepository.save(animal);
 
