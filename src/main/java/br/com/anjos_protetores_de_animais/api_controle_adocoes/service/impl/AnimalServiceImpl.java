@@ -4,11 +4,14 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.Adopti
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalDetailsDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.*;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.enums.Role;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UserNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.*;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.util.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +28,16 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalRepository animalRepository;
     private final SpecieRepository specieRepository;
     private final RaceRepository raceRepository;
+    private final AdoptionRequestRepository adoptionRequestRepository;
 
     public AnimalServiceImpl(final AnimalRepository animalRepository,
                              final SpecieRepository specieRepository,
-                             final RaceRepository raceRepository) {
+                             final RaceRepository raceRepository,
+                             final AdoptionRequestRepository adoptionRequestRepository) {
         this.animalRepository = animalRepository;
         this.specieRepository = specieRepository;
         this.raceRepository = raceRepository;
+        this.adoptionRequestRepository = adoptionRequestRepository;
     }
 
     @Override
@@ -66,33 +72,48 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     @Transactional
     public ResponseEntity<?> createAnimal(AnimalUpdatePayload payload) {
+        try {
+            final User currentUser = SecurityUtils.getCurrentUser();
 
-        final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
-        final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
+            if (!Role.ADMIN.equals(currentUser.getRole())) {
+                throw new UnauthorizedException();
+            }
 
-        final Animal animal = new Animal();
+            final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
+            final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
 
-        animal.setName(payload.getName());
-        animal.setDescription(payload.getDescription());
-        animal.setStatus(payload.getStatus());
-        animal.setSpecie(specie);
-        animal.setRace(race);
+            final Animal animal = new Animal();
 
-        // Novos campos
-        animal.setAge(payload.getAge());
-        animal.setGender(payload.getGender());
-        animal.setAnimalSize(payload.getAnimalSize());
-        animal.setPhotoUrl(payload.getPhotoUrl());
+            animal.setName(payload.getName());
+            animal.setDescription(payload.getDescription());
+            animal.setStatus(payload.getStatus());
+            animal.setSpecie(specie);
+            animal.setRace(race);
 
-        this.animalRepository.save(animal);
+            // Novos campos
+            animal.setAge(payload.getAge());
+            animal.setGender(payload.getGender());
+            animal.setAnimalSize(payload.getAnimalSize());
+            animal.setPhotoUrl(payload.getPhotoUrl());
 
-        return ResponseEntity.ok(null);
+            this.animalRepository.save(animal);
+
+            return ResponseEntity.ok(null);
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(e.getStatus())
+                .body(null);
+        }
     }
 
     @Override
     @Transactional
     public ResponseEntity<?> updateAnimal(UUID id, AnimalUpdatePayload payload) {
         try {
+            final User currentUser = SecurityUtils.getCurrentUser();
+
+            if (!Role.ADMIN.equals(currentUser.getRole())) {
+                throw new UnauthorizedException();
+            }
 
             final Specie specie = this.specieRepository.getReferenceById(UUID.fromString(payload.getSpecieId()));
             final Race race = this.raceRepository.getReferenceById(UUID.fromString(payload.getRaceId()));
@@ -116,15 +137,29 @@ public class AnimalServiceImpl implements AnimalService {
             return ResponseEntity.ok(null);
         } catch (AnimalNotFoundException e){
             return ResponseEntity.notFound().build();
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(e.getStatus())
+                .body(null);
         }
     }
 
     @Override
     @Transactional
-    public void deleteAnimal(UUID id) {
+    public void deleteAnimal(UUID id) throws UnauthorizedException {
+        final User currentUser = SecurityUtils.getCurrentUser();
+
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            throw new UnauthorizedException();
+        }
+
         if (!this.animalRepository.existsById(id)) {
             throw new EntityNotFoundException("Animal not found with id: " + id);
         }
+
+        if (this.adoptionRequestRepository.existsByAnimalId(id)) {
+            this.adoptionRequestRepository.deleteAllByAnimalId(id);
+        }
+
         this.animalRepository.deleteById(id);
     }
 }

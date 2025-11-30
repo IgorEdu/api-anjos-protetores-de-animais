@@ -4,6 +4,7 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.ErrorD
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.SpecieDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.SpecieNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.SpecieService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,14 @@ public class SpecieController extends BaseController {
 
     @PostMapping
     public ResponseEntity<SpecieDto> create(@Valid @RequestBody final NamePayload payload) {
-        final SpecieDto specie = this.specieService.create(payload);
+        try {
+            final SpecieDto specie = this.specieService.create(payload);
 
-        return ResponseEntity.ok(specie);
+            return ResponseEntity.ok(specie);
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(e.getStatus())
+                .body(null);
+        }
     }
 
     @DeleteMapping("{id}")
@@ -42,7 +48,7 @@ public class SpecieController extends BaseController {
             this.specieService.deleteById(id);
 
             return ResponseEntity.ok(null);
-        } catch (SpecieNotFoundException e) {
+        } catch (SpecieNotFoundException | UnauthorizedException e) {
             return ResponseEntity.status(e.getStatus())
                 .body(ErrorDto.toDto(e));
         }

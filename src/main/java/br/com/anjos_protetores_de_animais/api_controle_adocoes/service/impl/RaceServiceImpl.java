@@ -3,12 +3,16 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.service.impl;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.RaceDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Race;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.enums.Role;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.RaceNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.SpecieNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.RaceService;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.util.SecurityUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
@@ -50,7 +54,13 @@ public class RaceServiceImpl implements RaceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RaceDto create(@NotNull @NotNull final NamePayload payload,
-                          @NonNull @NotNull final UUID specieId) throws SpecieNotFoundException {
+                          @NonNull @NotNull final UUID specieId) throws SpecieNotFoundException, UnauthorizedException {
+        final User currentUser = SecurityUtils.getCurrentUser();
+
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            throw new UnauthorizedException();
+        }
+
         final String name = payload.getName();
 
         final Specie specie = this.specieRepository.findById(specieId)
@@ -64,7 +74,13 @@ public class RaceServiceImpl implements RaceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(@NonNull @NotNull final UUID id) throws RaceNotFoundException {
+    public void deleteById(@NonNull @NotNull final UUID id) throws RaceNotFoundException, UnauthorizedException {
+        final User currentUser = SecurityUtils.getCurrentUser();
+
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            throw new UnauthorizedException();
+        }
+
         this.repository.findById(id)
             .orElseThrow(RaceNotFoundException::new);
 

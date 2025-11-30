@@ -5,6 +5,7 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.RaceDt
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.RaceNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.SpecieNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.RaceService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class RaceController extends BaseController {
             final RaceDto race = this.raceService.create(payload, specieId);
 
             return ResponseEntity.ok(race);
-        } catch (SpecieNotFoundException e) {
+        } catch (SpecieNotFoundException | UnauthorizedException e) {
             return ResponseEntity.status(e.getStatus())
                 .body(ErrorDto.toDto(e));
         }
@@ -49,7 +50,7 @@ public class RaceController extends BaseController {
             this.raceService.deleteById(id);
 
             return ResponseEntity.ok(null);
-        } catch (RaceNotFoundException e) {
+        } catch (RaceNotFoundException | UnauthorizedException e) {
             return ResponseEntity.status(e.getStatus())
                 .body(ErrorDto.toDto(e));
         }

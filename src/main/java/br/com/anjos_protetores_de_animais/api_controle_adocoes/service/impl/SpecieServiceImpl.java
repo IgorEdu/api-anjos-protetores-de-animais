@@ -4,11 +4,15 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.Specie
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.AbstractBaseEntity;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Race;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.Specie;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.entity.User;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.enums.Role;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.SpecieNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.RaceRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.repository.SpecieRepository;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.SpecieService;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.util.SecurityUtils;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +52,13 @@ public class SpecieServiceImpl implements SpecieService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SpecieDto create(@NotNull @NotNull final NamePayload payload) {
+    public SpecieDto create(@NotNull @NotNull final NamePayload payload) throws UnauthorizedException {
+        final User currentUser = SecurityUtils.getCurrentUser();
+
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            throw new UnauthorizedException();
+        }
+
         final String name = payload.getName();
 
         final Specie specie = new Specie(name);
@@ -59,7 +69,13 @@ public class SpecieServiceImpl implements SpecieService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(@NotNull final UUID id) throws SpecieNotFoundException {
+    public void deleteById(@NotNull final UUID id) throws SpecieNotFoundException, UnauthorizedException {
+        final User currentUser = SecurityUtils.getCurrentUser();
+
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            throw new UnauthorizedException();
+        }
+
         this.repository.findById(id)
             .orElseThrow(SpecieNotFoundException::new);
 

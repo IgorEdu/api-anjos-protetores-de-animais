@@ -3,6 +3,7 @@ package br.com.anjos_protetores_de_animais.api_controle_adocoes.controller.pvt;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.AnimalListDto;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.AnimalUpdatePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.AnimalNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AdoptionRequestService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +60,9 @@ public class AnimalController extends BaseController {
         try {
             this.animalService.deleteAnimal(id);
             return ResponseEntity.ok().build();
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(e.getStatus())
+                .body(null);
         } catch (Exception e) {
             // Retorna 404 se não achar ou 400 se der outro erro
             return ResponseEntity.notFound().build();

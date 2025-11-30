@@ -4,6 +4,7 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.dto.RaceDt
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.domain.payload.NamePayload;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.RaceNotFoundException;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.SpecieNotFoundException;
+import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.UnauthorizedException;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 
@@ -17,8 +18,8 @@ public interface RaceService {
     RaceDto findRaceById(final UUID id);
 
     RaceDto create(@NonNull @NotNull final NamePayload payload,
-                   @NonNull @NotNull final UUID specieId) throws SpecieNotFoundException;
+                   @NonNull @NotNull final UUID specieId) throws SpecieNotFoundException, UnauthorizedException;
 
-    void deleteById(@NonNull @NotNull final UUID id) throws RaceNotFoundException;
+    void deleteById(@NonNull @NotNull final UUID id) throws RaceNotFoundException, UnauthorizedException;
 
 }

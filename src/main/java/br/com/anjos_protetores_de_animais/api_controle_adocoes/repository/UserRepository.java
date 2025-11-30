@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
-    Optional<User> findOneByEmail(final String email);
+    Optional<User> findOneByEmailAndIsDeletedFalse(final String email);
 
     Optional<User> findOneByIdAndIsDeletedFalse(final UUID id);
 }

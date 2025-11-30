@@ -43,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //                .findFirst();
 
         //  cenário real usando o repositório
-         final Optional<User> possibleUser = this.repository.findOneByEmail(email);
+         final Optional<User> possibleUser = this.repository.findOneByEmailAndIsDeletedFalse(email);
 
         if (possibleUser.isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -82,7 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         final String name = payload.getName();
         final String rawPassword = payload.getPassword();
 
-        final Optional<User> possibleUser = this.repository.findOneByEmail(email);
+        final Optional<User> possibleUser = this.repository.findOneByEmailAndIsDeletedFalse(email);
         if (possibleUser.isPresent()) {
             return ResponseEntity.badRequest().build();
         }
