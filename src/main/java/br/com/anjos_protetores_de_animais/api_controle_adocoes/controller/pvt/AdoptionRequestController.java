@@ -33,4 +33,14 @@ public class AdoptionRequestController extends BaseController {
     public ResponseEntity<?> acceptAdoptionRequest(@PathVariable final UUID id) {
         return this.adoptionRequestService.acceptRequestAdoption(id);
     }
+    
+    @PutMapping("/{id}/revoke")
+    public ResponseEntity<?> revokeAdoptionRequest(@PathVariable final UUID id) {
+        return this.adoptionRequestService.revokeRequestAdoption(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAdoptionRequest(@PathVariable final UUID id) {
+        return this.adoptionRequestService.deleteRequestAdoption(id);
+    }
 }

@@ -104,4 +104,41 @@ public class AdoptionRequestRequestServiceImpl implements AdoptionRequestService
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Override
+        public ResponseEntity<?> revokeRequestAdoption(@NotNull final UUID requestAdoptionId) {
+            try {
+                final AdoptionRequest adoptionRequest = this.adoptionRequestRepository.findById(requestAdoptionId)
+                        .orElseThrow(EntityNotFoundException::new);
+
+                final Animal animal = adoptionRequest.getAnimal();
+
+                // Só reverte se o animal estiver adotado
+                if ("ADOPTED".equals(animal.getStatus())) {
+                    animal.setAdoptedBy(null);
+                    animal.setStatus("AVAILABLE");
+                    this.animalRepository.save(animal);
+                }
+
+                return ResponseEntity.ok(animal);
+            } catch (EntityNotFoundException e) {
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+    @Override
+    public ResponseEntity<?> deleteRequestAdoption(@NotNull final UUID requestAdoptionId) {
+        try {
+            final AdoptionRequest adoptionRequest = this.adoptionRequestRepository.findById(requestAdoptionId)
+                    .orElseThrow(EntityNotFoundException::new);
+            
+            // Remove o pedido do banco
+            this.adoptionRequestRepository.delete(adoptionRequest);
+
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

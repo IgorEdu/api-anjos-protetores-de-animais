@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
                         .requestMatchers(HttpMethod.POST, "/api/pvt/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/pvt/auth/signUp").permitAll()
+                        
+                        .requestMatchers("/api/pvt/adoptionRequests/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/pvt/animals").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/pvt/animals/**").hasAnyRole("USER", "ADMIN")

@@ -24,6 +24,8 @@ public class AnimalListDto {
     private final SpecieDto specie;
     private final RaceDto race;
 
+    private final AdopterDto adoptedBy;
+
     @Builder
     protected AnimalListDto(
             final UUID id,
@@ -35,7 +37,8 @@ public class AnimalListDto {
             final String animalSize,
             final String photoUrl,
             final SpecieDto specie,
-            final RaceDto race
+            final RaceDto race,
+            final AdopterDto adoptedBy
     ) {
         this.id = id;
         this.name = name;
@@ -47,6 +50,7 @@ public class AnimalListDto {
         this.photoUrl = photoUrl;
         this.specie = specie;
         this.race = race;
+        this.adoptedBy = adoptedBy;
     }
 
     public static AnimalListDto toDto(final Animal entity) {
@@ -61,6 +65,7 @@ public class AnimalListDto {
                 .photoUrl(entity.getPhotoUrl())
                 .specie(SpecieDto.toDto(entity.getSpecie()))
                 .race(RaceDto.toDto(entity.getRace()))
+                .adoptedBy(entity.getAdoptedBy() != null ? AdopterDto.toDto(entity.getAdoptedBy()) : null)
                 .build();
     }
 }
