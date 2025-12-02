@@ -141,4 +141,9 @@ public class AdoptionRequestRequestServiceImpl implements AdoptionRequestService
         }
     }
 
+    @Override
+    public boolean isAdoptionRequested(UUID animalId, UUID adopterId) {
+        return this.adoptionRequestRepository.existsByAdopterIdAndAnimalId(adopterId, animalId);
+    }
+
 }

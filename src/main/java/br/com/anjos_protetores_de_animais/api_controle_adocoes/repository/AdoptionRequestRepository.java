@@ -16,4 +16,6 @@ public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequest
     int deleteAllByAnimalId(final UUID animalId);
 
     boolean existsByAnimalId(final UUID animalId);
+
+    boolean existsByAdopterIdAndAnimalId(UUID adopterId, UUID animalId);
 }

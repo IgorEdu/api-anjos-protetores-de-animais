@@ -8,6 +8,8 @@ import br.com.anjos_protetores_de_animais.api_controle_adocoes.exception.Unautho
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AdoptionRequestService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.AnimalService;
 import br.com.anjos_protetores_de_animais.api_controle_adocoes.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,5 +52,20 @@ public class AnimalController extends BaseController {
         } catch (UnauthorizedException e){
             return ResponseEntity.badRequest().body(e);
         }
+    }
+
+    @GetMapping("/request/check/{animalId}")
+    public ResponseEntity<Boolean> checkAdoptionStatus(@PathVariable UUID animalId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        // Se não estiver logado, não tem pedido
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.ok(false);
+        }
+
+        User user = (User) authentication.getPrincipal();
+        boolean exists = adoptionRequestService.isAdoptionRequested(animalId, user.getId());
+        
+        return ResponseEntity.ok(exists);
     }
 }

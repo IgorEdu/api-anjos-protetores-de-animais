@@ -16,4 +16,5 @@ public interface AdoptionRequestService {
     ResponseEntity<?> acceptRequestAdoption(final UUID requestAdoptionId);
     ResponseEntity<?> revokeRequestAdoption(final UUID requestAdoptionId);
     ResponseEntity<?> deleteRequestAdoption(final UUID requestAdoptionId);
+    boolean isAdoptionRequested(UUID animalId, UUID adopterId);
 }
