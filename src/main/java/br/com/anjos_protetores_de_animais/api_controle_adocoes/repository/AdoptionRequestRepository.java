@@ -18,4 +18,6 @@ public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequest
     boolean existsByAnimalId(final UUID animalId);
 
     boolean existsByAdopterIdAndAnimalId(UUID adopterId, UUID animalId);
+
+    List<AdoptionRequest> findAllByAdopterId(UUID adopterId);
 }

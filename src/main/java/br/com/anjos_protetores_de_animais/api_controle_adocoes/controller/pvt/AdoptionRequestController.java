@@ -43,4 +43,9 @@ public class AdoptionRequestController extends BaseController {
     public ResponseEntity<?> deleteAdoptionRequest(@PathVariable final UUID id) {
         return this.adoptionRequestService.deleteRequestAdoption(id);
     }
+    @GetMapping("/adopter/{id}")
+    public ResponseEntity<List<AdoptionRequestDto>> findAllAdoptionRequestsByAdopter(@PathVariable final UUID id) {
+        final List<AdoptionRequestDto> requests = this.adoptionRequestService.findAllAdoptionRequestsByAdopter(id);
+        return ResponseEntity.ok(requests);
+    }
 }

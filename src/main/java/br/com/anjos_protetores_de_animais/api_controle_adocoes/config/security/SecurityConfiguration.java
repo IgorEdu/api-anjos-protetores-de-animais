@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod; // Verifique se este import existe
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,27 +36,36 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .securityMatcher("/api/pvt/**")
                 .authorizeHttpRequests(authorize -> authorize
-                        // A LINHA MAIS IMPORTANTE A ADICIONAR:
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
+                        // 1. Configurações Públicas e Auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/pvt/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/pvt/auth/signUp").permitAll()
-                        
+
+                        // 2. REGRAS DE ADOÇÃO (CORRIGIDAS)
+                        // Usuário pode ver os SEUS próprios pedidos (busca por ID do adotante)
+                        .requestMatchers(HttpMethod.GET, "/api/pvt/adoptionRequests/adopter/**").hasAnyRole("USER", "ADMIN")
+                        // Usuário pode criar um pedido
+                        .requestMatchers(HttpMethod.POST, "/api/pvt/adoptionRequests").hasAnyRole("USER", "ADMIN") 
+                        // Usuário pode cancelar (deletar) um pedido
+                        .requestMatchers(HttpMethod.DELETE, "/api/pvt/adoptionRequests/**").hasAnyRole("USER", "ADMIN")
+                        // Listar TODOS os pedidos do sistema continua sendo só para ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/pvt/adoptionRequests").hasRole("ADMIN")
+                        // Outras operações de admin em pedidos (ex: aceitar/revogar que são PUT)
                         .requestMatchers("/api/pvt/adoptionRequests/**").hasRole("ADMIN")
 
+                        // 3. ANIMAIS
                         .requestMatchers(HttpMethod.GET, "/api/pvt/animals").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/pvt/animals/**").hasAnyRole("USER", "ADMIN")
+                        // Criar/Editar/Apagar Animais -> Só Admin
+                        .requestMatchers("/api/pvt/animals").hasRole("ADMIN")
+                        .requestMatchers("/api/pvt/animals/**").hasRole("ADMIN")
 
+                        // 4. ESPÉCIES
                         .requestMatchers(HttpMethod.GET, "/api/pvt/species").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/pvt/species/**").hasAnyRole("USER", "ADMIN")
-
-                        .requestMatchers("/api/pvt/animals").hasRole("ADMIN") // POST
-                        .requestMatchers("/api/pvt/animals/**").hasRole("ADMIN") // PUT, DELETE
-
-                        .requestMatchers("/api/pvt/species").hasRole("ADMIN") // POST
-                        .requestMatchers("/api/pvt/species/**").hasRole("ADMIN") // PUT, DELETE
-
-                        .requestMatchers("/api/pvt/adoptionRequests").hasRole("ADMIN") // POST
-                        .requestMatchers("/api/pvt/adoptionRequests/**").hasRole("ADMIN") // PUT, DELETE
+                        // Criar/Editar/Apagar Espécies -> Só Admin
+                        .requestMatchers("/api/pvt/species").hasRole("ADMIN") 
+                        .requestMatchers("/api/pvt/species/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -72,7 +81,6 @@ public class SecurityConfiguration {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .securityMatcher("/api/pub/**")
             .authorizeHttpRequests(authorize -> authorize
-                // A LINHA MAIS IMPORTANTE A ADICIONAR:
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/pub/**").permitAll()
                 .anyRequest().denyAll())
